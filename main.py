@@ -101,7 +101,7 @@ def get_from_url(url: str, auth: AuthBase = None) -> Response:
     return response
 
 
-def push_firmware(
+def post_firmware(
     url: str, file_path: str, auth: AuthBase = None
 ) -> tuple[ActionStatus, str]:
     """
@@ -286,7 +286,7 @@ def track_update_status(url: str, task_id: str, auth: AuthBase = None) -> Action
 def main():
     parser = ArgumentParser(
         prog="redfish-firmware-update-tool",
-        description="This is a tool for publishing firmware to OpenBMC for firmware updates via Redfish's Restful API.",
+        description="This is a tool for posting firmware to OpenBMC for firmware updates via Redfish's Restful API.",
     )
     parser.add_argument(
         "--bmc-ip",
@@ -337,7 +337,7 @@ def main():
 
     if args.file_path:
         url = urlparse(base_url)._replace(path="/redfish/v1/UpdateService/").geturl()
-        status, task_id = push_firmware(url, args.file_path, auth)
+        status, task_id = post_firmware(url, args.file_path, auth)
 
     task_id = args.task_id if args.task_id is not None else task_id
 

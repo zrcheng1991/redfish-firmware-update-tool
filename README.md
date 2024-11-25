@@ -1,6 +1,6 @@
 # Redfish Firmware Update Tool
 
-This is a tool to publish firmware to OpenBMC for firmware updates via Redfish's Restful API.
+This is a tool for posting firmware to OpenBMC for firmware updates via Redfish's Restful API.
 
 ## Table of Contents
 - [Release Note](#release-note)
@@ -11,14 +11,14 @@ This is a tool to publish firmware to OpenBMC for firmware updates via Redfish's
   - [Posting Firmware](#posting-firmware)
   - [Tracking Update Status](#tracking-update-status)
 - [Reference Documents](#reference-documents)
-  
+
 ---
 
 ## Release Note
 | Date | Version | Comment |
 | :--- | :--- | :--- |
 | 2024/11/25 | 0.1 | Initial release. |
-  
+
 ## Features
 - Simple firmware update
 - Multipart firmware update with flexible target selection
@@ -47,17 +47,17 @@ options:
 ```
 
 ### Posting Firmware
-Assume that the IPv4 address of the BMC is `192.168.10.15`, and the path to the firmware file is `cec1736-apfw-20307.bin`.  
+Assume that the IPv4 address of the BMC is `192.168.10.15`, and the path to the firmware file is `cec1736-apfw-20307.bin`.
 You can initiate the firmware update by using following command:
 ```bash
 python RedfishFirmwareUpdate.py --bmc-ip 192.168.10.15 --file-path cec1736-apfw-20307.bin
 ```
-  
+
 > [!NOTE]
 > Before starting to post the firmware, it checks if the server is reachable by attempting an HTTP GET from the URI `/redfish/v1/UpdateService`.
 > The GET method used by the tool has a timeout of 3 seconds and 3 repeated attempts. If the above attempt fails, error messages are displayed.
-  
-If the BMC supports Multipart HTTP Push method, it will retrieves available targets from the URI `/redfish/v1/UpdateService/FirmwareInventory`  
+
+If the BMC supports Multipart HTTP Push method, it will retrieves available targets from the URI `/redfish/v1/UpdateService/FirmwareInventory`
 and list all the targets on the screen and number them. For example:
 ```bash
 Update Service on this server supports Multipart HTTP PUSH.
@@ -76,13 +76,13 @@ Please enter numbers to select multiple targets, separated by spaces,
 or 0 to indicate that Multipart HTTP PUSH is not used.
 >>
 ```
-Users can select multiple targets by simply providing space-separated numbers, or enter `0` to use the original PUSH method.  
+Users can select multiple targets by simply providing space-separated numbers, or enter `0` to use the original PUSH method.
 
-> [!Note]  
+> [!Note]
 > By default, the URI for posting firmware is `/redfish/v1/UpdateService`.
 > If the BMC server supports Multipart HTTP PUSH, the URI is replaced with the path indicated by `MultipartHttpPushUri` in the JSON data.
 > Normally, the URI for Multipart HTTP PUSH should be `/redfish/v1/UpdateService/update-multipart`.
-  
+
 Then the update process will begin:
 ```
 Posting firmware  (100%)|██████████████████████████████████████████████████| 25.9M/25.9M [00:04<00:00, 6.64MB/s]
@@ -90,20 +90,20 @@ Finish posting the firmware! (Task Id = 12)
 Firmware update has started! (Task Id = 12)
 Updating firmware (  0%)|                                                  | [00:07]
 ```
-  
+
 After the firmware is posted to the BMC, it will start tracking the progress of the update task.
 ```
 Firmware update has started! (Task Id = 12)
 Updating firmware (  0%)|                                                  | [00:07]
 ```
-  
+
 If the update task completes successfully, the message is displayed as follows:
 ```
 Firmware update has started! (Task Id = 12)
 Updating firmware (100%)|██████████████████████████████████████████████████| [05:58]
 Firmware update completed!
 ```
-  
+
 If the update task fails, critical messages collected from server will be displayed:
 ```
 Firmware update has started! (Task Id = 13)
@@ -117,15 +117,15 @@ The resource property 'CPU_0' has detected errors of type 'Component image is id
 ```
 
 ### Tracking Update Status
-Assume that the IPv4 address of the BMC is `192.168.10.15`, and the Task ID is `13`.  
+Assume that the IPv4 address of the BMC is `192.168.10.15`, and the Task ID is `13`.
 You can track the firmware update status by using following command:
 ```bash
 python RedfishFirmwareUpdate.py --bmc-ip 192.168.10.15 --task-id 13
 ```
-  
-> [!Note]  
+
+> [!Note]
 > By default, the URI for tracking task status is `/redfish/v1/TaskService/Tasks/{task_id}`.
-  
+
 If the task is in progress, a progress bar is displayed to give a visual indication of its progress.
 ```
 Firmware update has started! (Task Id = 12)
@@ -134,7 +134,7 @@ Updating firmware (  0%)|                                                  | [00
 
 > [!NOTE]
 > The progress percentage depends on the BMC report. So the progress bar may not look like a linear growth.
-  
+
 Otherwise, if the task is completed, only the result message will be displayed in the terminal.
 ```
 Firmware update completed!
@@ -155,7 +155,7 @@ The resource property 'CPU_0' has detected errors of type 'Component image is id
 
 > [!CAUTION]
 > In general, firmware upgrade should be completed within 10 minutes, depending on system design.
-> If not completed within this time, the tool will stop tracking its progress and prompt the user with following message:  
+> If not completed within this time, the tool will stop tracking its progress and prompt the user with following message:
 > ```This task has taken longer than expected! (Time elapsed: 10:00)```
 
 ## Reference Documents
